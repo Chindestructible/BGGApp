@@ -3,11 +3,14 @@ import React,{useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, FlatList, KeyboardAvoidingView} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { Octicons, Feather } from '@expo/vector-icons'; 
+import { FontAwesome5 } from '@expo/vector-icons'; 
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMinus } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { parse } from 'fast-xml-parser';
+import XMLParser from 'react-xml-parser';
 
 const ROOT_URI = "https://www.boardgamegeek.com/xmlapi2/"
 
@@ -21,7 +24,7 @@ export default function App(){
          <Tap.Screen options={{
           tabBarLabel: 'Collection',
           tabBarIcon: ({ color, size }) => (
-            <Feather name="calendar" color={color} size={size} />
+            <FontAwesome5 name="dice" size={24} color="black" />
           ),
         }} name = {"Collection"} component={Collection} />
        </Tap.Navigator>
@@ -32,35 +35,115 @@ export default function App(){
 /* Component for the Collection screen */
 function Collection(){
   const [collection, setCollection] = useState([]);
-
-  const onPress = (username) =>{
-    getCollection(username)
+  const onPress = async(username) =>{
+    await getCollection(username).then(res => console.log(collection))
   }
 
   const getCollection = async(username)=>{
-    const response = await fetch(ROOT_URI + "collection?username=" + username).catch(err => console.log(err))
-    var tempArray = [];
-    response.map((item) => {[...tempArray, item]})
-    setCollection(tempArray)
-    console.log(collection)
-
-    //const result =  await response.json().catch(err => console.log(err));
-    //console.log(result)
-
+    const response = await fetch(ROOT_URI + "collection?username=" + username).then(res => res.text()).then(data => {
+        //Parses XML
+        var xml = new XMLParser().parseFromString(data); 
+        console.log("Parsed XML: ")
+        console.log(xml)
+        console.log("Individual Rows: ")
+        console.log(xml.children)
+        var tempArray = [];
+        //Maps each child of the collection to an array
+        xml.children.map(item => tempArray.push(item))
+        //Set the collection state 
+        setCollection(tempArray);
+    }).catch(err => console.log(err))
   }
 
   return(
     <View style={styles.container}>
       <KeyboardAvoidingView behavior="padding" style={styles.innerView}>
-        <AddPanel onPress = {onPress} />
+        <AddCollectionUsername onPress = {onPress} />
         <Text> {collection.length} </Text>
+        <FlatList contentContainerStyle = {styles.container} data={collection} renderItem={({item}) => 
+            (<CollectionRow name = {item.children[0]} yearpublished = {item.children[1]} image = {item.children[2]} thumbnail = {item.children[3]} status = {item.children[4]} numplays = {item.children[5]} comment = {item.children[6]} />)} 
+        />
       </KeyboardAvoidingView>
     </View>
     )
 }
 
+//Displays a row of the collection
+function CollectionRow(props){
+    return(
+        <View>
+            <GameName />
+            <YearPublished />
+            <GameImage />
+            <GameThumbnail />
+            <GameStatus />
+            <GamePlays />
+            <GameComment />
+        </View>
+    )
+}
+
+/* Components for a collection row */
+function GameName(props) {
+    return(
+        <View>
+            <Text> {props.name} </Text>
+        </View>
+    )
+}
+
+function YearPublished(props){
+    return(
+        <View>
+            <Text> {props.yearpublished} </Text>
+        </View>
+    )
+}
+
+function GameImage(props){
+    return(
+        <View>
+            <Image source={props.image}/>
+        </View>
+    )
+}
+
+function GameThumbnail(props){
+    return(
+        <View>
+            <Image source={props.thumbnail}/>
+        </View>
+    )
+}
+
+function GameStatus(props) {
+    return(
+        <View>
+            <Text> {props.status} </Text>
+        </View>
+    )
+}
+
+function GamePlays(props) {
+    return(
+        <View>
+            <Text> {props.numplays} </Text>
+        </View>
+    )
+}
+
+function GameComment(props) {
+    return(
+        <View>
+            <Text> {props.comment} </Text>
+        </View>
+    )
+}
+/* End Components for Collection row */
+
+
  //Contains the elements to add a username, a text input and a button
-function AddPanel(props){
+function AddCollectionUsername(props){
    
   const [username, setUsername] = useState("")
 
