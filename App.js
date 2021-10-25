@@ -43,14 +43,21 @@ function Collection(){
     const response = await fetch(ROOT_URI + "collection?username=" + username).then(res => res.text()).then(data => {
         //Parses XML
         var xml = new XMLParser().parseFromString(data); 
+
+        //Debugging
         console.log("Parsed XML: ")
         console.log(xml)
         console.log("Individual Rows: ")
         console.log(xml.children)
+        console.log("Specific Item")
+        console.log(xml.children[0].children)
+        console.log("Name ")
+        console.log(xml.children[0].children[0].value)
         var tempArray = [];
         //Maps each child of the collection to an array
         xml.children.map(item => tempArray.push(item))
         //Set the collection state 
+        tempArray.map(item => console.log(item.children[0].value))
         setCollection(tempArray);
     }).catch(err => console.log(err))
   }
@@ -60,9 +67,8 @@ function Collection(){
       <KeyboardAvoidingView behavior="padding" style={styles.innerView}>
         <AddCollectionUsername onPress = {onPress} />
         <Text> {collection.length} </Text>
-        <FlatList contentContainerStyle = {styles.container} data={collection} renderItem={({item}) => 
-            (<CollectionRow name = {item.children[0]} yearpublished = {item.children[1]} image = {item.children[2]} thumbnail = {item.children[3]} status = {item.children[4]} numplays = {item.children[5]} comment = {item.children[6]} />)} 
-        />
+       {collection.length > 0 && <FlatList contentContainerStyle = {styles.container} keyExtractor={item => item.id} data={collection} 
+          renderItem={({item}) => <CollectionRow name = {item.children[0].value} yearpublished = {item.children[1].value} status = {item.children[4].value} numplays = {item.children[5].value}/>} /> }
       </KeyboardAvoidingView>
     </View>
     )
@@ -72,13 +78,13 @@ function Collection(){
 function CollectionRow(props){
     return(
         <View>
-            <GameName />
-            <YearPublished />
-            <GameImage />
-            <GameThumbnail />
-            <GameStatus />
-            <GamePlays />
-            <GameComment />
+            <GameName name = {props.name}/>
+            <YearPublished yearpublished = {props.yearpublished}/>
+            <GameImage image = {props.image}/>
+            <GameThumbnail thumbnail = {props.thumbnail}/>
+            <GameStatus status = {props.status}/>
+            <GamePlays numplays = {props.numplays}/>
+            <GameComment comment = {props.comment}/>
         </View>
     )
 }
@@ -103,15 +109,15 @@ function YearPublished(props){
 function GameImage(props){
     return(
         <View>
-            <Image source={props.image}/>
+            <Image source={{uri: props.image}}/>
         </View>
     )
 }
 
 function GameThumbnail(props){
     return(
-        <View>
-            <Image source={props.thumbnail}/>
+        <View style = {styles.container}>
+            <Image style = {styles.icon} source={props.thumbnail}/>
         </View>
     )
 }
