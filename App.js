@@ -35,8 +35,8 @@ export default function App(){
 /* Component for the Collection screen */
 function Collection(){
   const [collection, setCollection] = useState([]);
-  const onPress = async(username) =>{
-    await getCollection(username).then(res => console.log(collection))
+  const onPress = (username) =>{
+    getCollection(username)
   }
 
   const getCollection = async(username)=>{
@@ -68,7 +68,7 @@ function Collection(){
         <AddCollectionUsername onPress = {onPress} />
         <Text> {collection.length} </Text>
        {collection.length > 0 && <FlatList contentContainerStyle = {styles.container} keyExtractor={item => item.id} data={collection} 
-          renderItem={({item}) => <CollectionRow name = {item.children[0].value} yearpublished = {item.children[1].value} status = {item.children[4].value} numplays = {item.children[5].value}/>} /> }
+          renderItem={({item}) => <CollectionRow name = {item.children[0].value} yearpublished = {item.children[1].value} image = {item.children[2].value} status = {item.children[4].value} numplays = {item.children[5].value} />} /> }
       </KeyboardAvoidingView>
     </View>
     )
@@ -77,11 +77,10 @@ function Collection(){
 //Displays a row of the collection
 function CollectionRow(props){
     return(
-        <View>
+        <View style = {styles.cityPanel}>
             <GameName name = {props.name}/>
             <YearPublished yearpublished = {props.yearpublished}/>
             <GameImage image = {props.image}/>
-            <GameThumbnail thumbnail = {props.thumbnail}/>
             <GameStatus status = {props.status}/>
             <GamePlays numplays = {props.numplays}/>
             <GameComment comment = {props.comment}/>
@@ -109,15 +108,7 @@ function YearPublished(props){
 function GameImage(props){
     return(
         <View>
-            <Image source={{uri: props.image}}/>
-        </View>
-    )
-}
-
-function GameThumbnail(props){
-    return(
-        <View style = {styles.container}>
-            <Image style = {styles.icon} source={props.thumbnail}/>
+            <Image style = {styles.icon} source={{uri: props.image}}/>
         </View>
     )
 }
@@ -186,8 +177,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 40
   },icon:{
-    width:20,
-    height:20
+    width:50,
+    height:50
   },addPanel:{
         marginBottom: 5,
         alignItems: 'center',
