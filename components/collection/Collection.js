@@ -36,6 +36,11 @@ function Collection(navigation){
     setUserName(username);
   }
 
+  const clear = () => {
+        setCollection([]);
+        localStorage.setItem('collectionOwner', "");
+  }
+
 
   const getGame = async(id, name) => {
     setGameClicked(true);
@@ -81,7 +86,7 @@ function Collection(navigation){
     <View style={styles.container}>
      {!gameClicked && 
         <ScrollView behavior="padding" style={styles.innerView}>
-        <AddCollectionUsername onPress = {onPress} />
+        <AddCollectionUsername onPress = {onPress} clear = {clear} />
        {collection.length > 0 && <FlatList contentContainerStyle = {styles.container} keyExtractor={item => item.id} data={collection} 
           renderItem={({item}) => <CollectionRow onClick={() => getGame(item.attributes.objectid, item.children[0].value)} name = {item.children[0].value} yearpublished = {item.children[1].value} image = {item.children[2].value} status = {item.children[4].value} numplays = {item.children[5].value} />} /> }
          </ScrollView>
