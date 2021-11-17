@@ -4,6 +4,7 @@ import React,{useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, FlatList, KeyboardAvoidingView, ScrollView} from 'react-native';
 import styles from '../../style';
 import Game from '../game/Game';
+import { AsyncStorage } from '@react-native-async-storage/async-storage'
 
 
 const ROOT_URI = "http://localhost:8080/https://www.boardgamegeek.com/xmlapi2/"
@@ -14,9 +15,25 @@ function Collection(navigation){
   const [gameClicked, setGameClicked] = useState(false);
   const [gameId, setGameId] = useState();
   const [gameName, setGameName] = useState();
+  const [userName, setUserName] = useState("")
+
+  useEffect(() => {
+       // ON screen startup, look for username
+       let username = localStorage.getItem('collectionOwner');
+       console.log("Username: " + username);
+       if(username.length > 2){
+         getCollection(username);
+       }
+       else{
+         localStorage.setItem('collectionOwner', "");
+       }
+  }, [])
+
+  
 
   const onPress = (username) =>{
     getCollection(username)
+    setUserName(username);
   }
 
 
@@ -25,6 +42,16 @@ function Collection(navigation){
     setGameId(id);
     setGameName(name);
   }
+
+  const writeCollection = async() => {
+    let collectionList = ""
+    collection.map(item => {collectionList += item.attributes.objectid + " ";});
+    await localStorage.setItem('collectionOwner', userName)
+    console.log(localStorage.getItem('collectionOwner'));
+    
+  }
+
+
 
   const getCollection = async(username)=>{
     const response = await fetch(ROOT_URI + "collection?username=" + username).then(res => res.text()).then(data => {
@@ -52,11 +79,16 @@ function Collection(navigation){
 
   return(
     <View style={styles.container}>
-     {!gameClicked && <ScrollView behavior="padding" style={styles.innerView}>
+     {!gameClicked && 
+        <ScrollView behavior="padding" style={styles.innerView}>
         <AddCollectionUsername onPress = {onPress} />
        {collection.length > 0 && <FlatList contentContainerStyle = {styles.container} keyExtractor={item => item.id} data={collection} 
           renderItem={({item}) => <CollectionRow onClick={() => getGame(item.attributes.objectid, item.children[0].value)} name = {item.children[0].value} yearpublished = {item.children[1].value} image = {item.children[2].value} status = {item.children[4].value} numplays = {item.children[5].value} />} /> }
-      </ScrollView> }
+         </ScrollView>
+      }
+
+      {!gameClicked && <DownloadCollection onPress = {writeCollection}/>}
+
 
       {gameClicked && <View style = {styles.container}> 
         <TouchableOpacity
@@ -79,6 +111,25 @@ function Collection(navigation){
     );
 }
 
+function DownloadCollection(props){
+  return(
+   <View style={styles.game}>
+      <TouchableOpacity
+       style = {styles.button}
+        href={"#" }
+        onPress={
+          ()=>{
+            props.onPress()
+          }
+        }
+      >
+      <Text> Save Session </Text>
+      </TouchableOpacity>
+  </View>
+    );
+}
+
+
  //Contains the elements to add a username, a text input and a button
 function AddCollectionUsername(props){
    
@@ -89,7 +140,7 @@ function AddCollectionUsername(props){
   }
 
   return(
-   <View style={styles.container}>
+   <View style={styles.game}>
       <TextInput style = {styles.input} type={"text"} name={"city_text"} placeholder={"BGG Username"} id={"city_text"} onChange={getText} value={username}/>
       <TouchableOpacity
        style = {styles.button}

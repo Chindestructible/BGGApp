@@ -56,7 +56,7 @@ function GameStatus(props) {
 function GamePlays(props) {
     return(
         <View>
-            <Text> {props.numplays} </Text>
+            <Text>Times Played: {props.numplays}</Text>
         </View>
     )
 }

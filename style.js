@@ -42,14 +42,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     font: '15px Arial, sans-serif',
-    width: 400
+    width: 425
   }, innerView:{
     width:"70%"
   }, game:{
      alignItems: 'center',
      justifyContent: 'space-between',
      flexDirection: 'column',
-     flex: 2
+     flex: 2,
+     marginBottom: 20
   }
 });
 
