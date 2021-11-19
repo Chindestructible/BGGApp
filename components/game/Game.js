@@ -9,7 +9,7 @@ import XMLParser from 'react-xml-parser';
 const ROOT_URI = "http://localhost:8080/https://www.boardgamegeek.com/xmlapi/boardgame"
 
 
-//Displays a row of the collection
+//Displays a specific game's details
 function Game(props){
 
 const [gameProperties, setGameProperties] = useState([]);

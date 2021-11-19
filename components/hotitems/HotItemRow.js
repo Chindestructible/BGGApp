@@ -2,7 +2,7 @@ import React,{useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, FlatList, KeyboardAvoidingView, ScrollView} from 'react-native';
 import styles from '../../style';
 
-//Displays a row of the collection
+//Displays a row of the hot items list
 function HotItemRow(props){
     return(
         <View onClick = {props.onClick} style = {styles.gamePanel}>
@@ -16,7 +16,7 @@ function HotItemRow(props){
 
 export default HotItemRow;
 
-/* Components for a collection row */
+/* Components for a hot item row */
 function Number(props){
     return(
         <View>
@@ -46,6 +46,3 @@ function YearPublished(props){
         </View>
     )
 }
-
-
-/* End Components for Collection row */

@@ -32,8 +32,10 @@ function Collection(navigation){
   
 
   const onPress = (username) =>{
-    getCollection(username)
-    setUserName(username);
+   if(username.length > 2){
+        getCollection(username)
+        setUserName(username);
+    }
   }
 
   const clear = () => {
@@ -43,17 +45,17 @@ function Collection(navigation){
 
 
   const getGame = async(id, name) => {
+    //Sets gameClicked boolean to true, which hides the collection and shows a specific game detail
     setGameClicked(true);
     setGameId(id);
     setGameName(name);
   }
 
   const writeCollection = async() => {
-    let collectionList = ""
-    collection.map(item => {collectionList += item.attributes.objectid + " ";});
-    await localStorage.setItem('collectionOwner', userName)
-    console.log(localStorage.getItem('collectionOwner'));
-    
+  //When user hits save session, this stores the current collection's username and stashes it
+    if(userName.length > 2){
+        await localStorage.setItem('collectionOwner', userName).catch(err => {console.log(err);})
+    }
   }
 
 
@@ -64,14 +66,14 @@ function Collection(navigation){
         var xml = new XMLParser().parseFromString(data); 
 
         //Debugging
-       console.log("Parsed XML: ")
+       /*console.log("Parsed XML: ")
        console.log(xml)
         console.log("Individual Rows: ")
         console.log(xml.children)
         console.log("Specific Item")
         console.log(xml.children[0].children)
         console.log("Name ")
-        console.log(xml.children[0].children[0].value)
+        console.log(xml.children[0].children[0].value) */
         var tempArray = [];
         //Maps each child of the collection to an array
         xml.children.map(item => tempArray.push(item))

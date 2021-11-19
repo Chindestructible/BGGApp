@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, FlatList, K
 import styles from '../../style';
 import Hyperlink from 'react-native-hyperlink'
 
-//Displays a row of the collection
+//Displays the details for a specific game row
 function GameRow(props){
     return(
         <View style = {styles.game}>
@@ -20,7 +20,7 @@ function GameRow(props){
 
 export default GameRow;
 
-/* Components for a collection row */
+/* Components for a game row */
 function Description(props){
     return(
         <View style = {styles.gamePanel}>
@@ -58,6 +58,3 @@ function Link(props){
       </Hyperlink>
     )
 }
-
-
-/* End Components for Collection row */

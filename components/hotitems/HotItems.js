@@ -17,23 +17,26 @@ const [gameName, setGameName] = useState();
 const [gameClicked, setGameClicked] = useState(false);
 
 useEffect(() => {
+        //On render, get the hot games from BGG
         getGames();
   }, [])
 
    const getGame = async(id, name) => {
+    //Same as method in Collection, when a game is clicked set a boolean, and the id and name of the game to pass down through props
     setGameClicked(true);
     setGameId(id);
     setGameName(name);
   }
 
   const getGames = async()=>{
+    //API call to all hot items from bgg
     const response = await fetch(ROOT_URI + "hot?type=boardgame" + name).then(res => res.text()).then(data => {
         //Parses XML
         var xml = new XMLParser().parseFromString(data); 
 
         //Debugging
-        console.log("Parsed XML: ")
-        console.log(xml)
+       // console.log("Parsed XML: ")
+        //console.log(xml)
         /*console.log("Individual Rows: ")
         console.log(xml.children)
         console.log("Specific Item")
@@ -42,7 +45,6 @@ useEffect(() => {
         var tempArray = [];
         xml.children.map(item => tempArray.push(item))
         //Set the collection state 
-        //tempArray.map(item => console.log(item.children[0].value))
         setHotItems(tempArray);
     }).catch(err => console.log(err))
   }
